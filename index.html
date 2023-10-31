@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <title>LINE風チャットアプリ</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+    <!-- コンテンツ表示画面 -->
+
+    <div class="container">
+        <div class="chat-area">
+            <p id="name"></p>
+            <p id="chat-msg"></p>
+        </div>
+
+        <div class="uname-area">
+            <div div class="message-area-text">
+                <input type="text" id="uname" placeholder="あなたの名前をいれてください">
+
+            </div>
+            <div class="message-area-button">
+                <button id="uname_button">登録</button>
+            </div>
+        </div>
+
+        <div class="message-area">
+
+            <div class="message-area-text">
+
+                <textarea id="text" cols="30" rows="10"></textarea>
+            </div>
+            <div class="message-area-button">
+                <button id="send" class="button">送信</button>
+                <button id="clear-chat" class="button">履歴<br>消去</button>
+            </div>
+        </div>
+    </div>
+
+    <!--/ コンテンツ表示画面 -->
+
+
+
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- JQuery -->
+
+
+    <!--** 以下Firebase **-->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+            from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "**************************",
+            authDomain: "**************************",
+            projectId: "**************************",
+            storageBucket: "**************************",
+            messagingSenderId: "**************************",
+            appId: "**************************"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const dbRef = ref(db, "chat");
+        const provider = new GoogleAuthProvider();
+        const auth = getAuth();
+
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // ログイン成功時の処理
+                const user = result.user;
+                // ここでユーザー情報を使用して何かする
+            }).catch((error) => {
+                // エラー処理
+                console.error("Authentication failed:", error);
+            });
+
+        //ユーザー登録
+
+        //データの登録
+        let uname = '';
+        $("#uname_button").on("click", function () {
+            uname = $("#uname").val();
+            if (uname === '') {
+                alert("名前を入力してください");
+            } else {
+                $("#name").text();
+            }
+        });
+
+
+        $("#text").on("keydown", function (e) {
+            if (e.shiftKey && e.keyCode === 13) { //ShitEnterで送信
+                e.preventDefault();
+                sendMessage();
+            }
+        });            
+        
+        function sendMessage(){
+            const now = new Date();
+            const textValue = $("#text").val();
+            const hour = ("0" + now.getHours()).slice(-2);
+            const min = ("0" + now.getMinutes()).slice(-2);
+
+            let specialEvent = '';
+                if (textValue.includes("誕生日")) {
+                    specialEvent = 'birthday';
+                } else if (textValue.includes("ハロウィン")) {
+                    specialEvent = 'halloween';
+            }
+
+            const text = {
+                uname: uname,
+                text: textValue,
+                year: now.getFullYear(),
+                month: now.getMonth() + 1,
+                date: now.getDate(),
+                hour: hour,
+                min: min,
+                specialEvent: specialEvent
+        };
+               
+            const newPostRef = push(dbRef); //ユニークキーの発行
+            set(newPostRef, text);
+
+            $("#text").val('');
+        }
+
+        function showBirthAnime() {
+            for (var i = 0; i < 50; i++) {
+                var cake = $('<img src="img/icons850.png" class="cake-animation">');
+
+                // 画面の横幅内でランダムな開始位置を設定
+                cake.css("left", Math.random() * $(window).width() + "px");
+
+                // ランダムな速度でアニメーションを適用
+                var duration = Math.random() * 3 + 2; // 2秒から5秒の範囲でランダム
+
+                cake.css({
+                    "animation": "dropCake " + duration + "s linear forwards"
+                });
+            
+                $("body").append(cake);
+
+               // アニメーション終了後に画像を削除
+                (function(cake, duration){
+                setTimeout(function () {
+                cake.remove();
+                 }, duration * 1000);
+                })(cake, duration);
+            }
+        }
+
+        function showHalloAnime() {
+            for (var i = 0; i < 50; i++) {
+                var cake = $('<img src="img/ハロウィン-48.png" class="cake-animation">');
+
+                // 画面の横幅内でランダムな開始位置を設定
+                cake.css("left", Math.random() * $(window).width() + "px");
+
+                // ランダムな速度でアニメーションを適用
+                var duration = Math.random() * 3 + 2; // 2秒から5秒の範囲でランダム
+
+                cake.css({
+                    "animation": "dropCake " + duration + "s linear forwards"
+                });
+            
+                $("body").append(cake);
+
+               // アニメーション終了後に画像を削除
+                (function(cake, duration){
+                setTimeout(function () {
+                cake.remove();
+                 }, duration * 1000);
+                })(cake, duration);
+            }
+        }
+
+        // DBおよびチャット履歴の削除
+        $("#clear-chat").on("click", function () {
+            const chatRef = ref(db, 'chat');
+            remove(chatRef);
+            $(".chat-area").empty();
+        });
+
+
+        // //データの受信および出力
+        onChildAdded(dbRef, function (data) {
+            const text = data.val();
+            const key = data.key;
+            let h = '';
+            if (text.uname === uname) {
+                h += '<div class="my-message">';
+                h += '<p class="uname">' + text.uname + '</p>'; // ユーザー名を表示
+                h += '<div class="my-message-content">';
+                h += text.year + '/' + text.month + '/' + text.date + ' ' + text.hour + ':' + text.min;
+                h += '<br>';
+                h += text.text;
+                h += '</div>';
+                h += '</div>';
+            } else {
+                h += '<div class="other-message">';
+                h += '<p class="uname">' + text.uname + '</p>'; // ユーザー名を表示
+                h += '<div class="other-message-content">';
+                h += text.year + '/' + text.month + '/' + text.date + ' ' + text.hour + ':' + text.min;
+                h += '<br>';
+                h += text.text;
+                h += '</div>';
+                h += '</div>';
+            }
+
+            $(".chat-area").append(h);
+            $(".chat-area").scrollTop($(".chat-area")[0].scrollHeight); // 最新投稿へ移動
+
+            if (text.specialEvent === 'birthday') {
+                showBirthAnime();
+            } else if (text.specialEvent === 'halloween') {
+                showHalloAnime();
+            }
+        });
+    </script>
+</body>
+
+</html>

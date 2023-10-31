@@ -1,0 +1,136 @@
+.container {
+    max-width: 400px; /* スマートフォン向けに最適化 */
+    margin: 0 auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* シャドウを追加 */
+    font-family: Arial, sans-serif; /* フォントを指定 */
+}
+
+.chat-area {
+    height: 80vh;
+    background: #7494c0;; /* 背景色を白に */
+    overflow-y: auto;
+    padding: 15px; /* 余白を追加 */
+    box-sizing: border-box;
+}
+
+/* メッセージのスタイル */
+
+
+/* 自分のメッセージ */
+.my-message {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.my-message-content {
+    display: inline-block;
+    background: #DCF8C6;
+    color: black;
+    max-width: 70%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 20px;
+    line-height: 1.4;
+    font-size: 15px;
+    word-wrap: break-word;
+}
+
+.other-message {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.other-message-content {
+    display: inline-block;
+    background-color: #EAEAEA;
+    color: black;
+    max-width: 70%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 20px;
+    line-height: 1.4;
+    font-size: 15px;
+    word-wrap: break-word;
+}
+
+.uname{
+    font-size: 10px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+
+.message-area {
+    display: flex;
+    background: #f7f7f7; /* エリアの背景色を指定 */
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.message-area-text {
+    width: 85%;
+    margin-right: 10px;
+}
+
+.message-area-button {
+    width: 15%;
+}
+
+.message-area-text input {
+    width: 100%;
+    border: none; /* 枠線を消す */
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 20px;
+}
+
+.message-area-text textarea {
+    width: 100%;
+    border: none; /* 枠線を消す */
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 20px;
+}
+.message-area-button button {
+    width: 100%;
+    background: #2d4260; 
+    border: none;
+    border-radius:5px; /* ボタンの角を丸く */
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* スクロールバーのカスタマイズ（必要に応じて） */
+.chat-area::-webkit-scrollbar {
+    width: 5px;
+}
+
+.chat-area::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+.chat-area::-webkit-scrollbar-track {
+    background-color: #f7f7f7;
+}
+
+.uname-area {
+    display: flex;
+    align-items: center;
+    background: #f7f7f7;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+@keyframes dropCake {
+    0% { top: -100px; }
+    100% { top: 100%; }
+}
+
+.cake-animation {
+    position: fixed;
+    top: -100px;
+    z-index: 10;
+}
+
